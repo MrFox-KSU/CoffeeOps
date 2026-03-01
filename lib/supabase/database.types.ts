@@ -403,10 +403,35 @@ export type Database = {
           },
         ]
       }
+      forecast_model_configs: {
+        Row: {
+          config: Json
+          engine: string
+          granularity: string
+          target: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          engine: string
+          granularity: string
+          target?: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          engine?: string
+          granularity?: string
+          target?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       forecast_outputs: {
         Row: {
           created_at: string
           day: string
+          engine: string
           id: number
           org_id: string
           p50_net_sales: number
@@ -415,10 +440,12 @@ export type Database = {
           p95_high: number
           p95_low: number
           run_id: string
+          visibility: string
         }
         Insert: {
           created_at?: string
           day: string
+          engine?: string
           id?: number
           org_id: string
           p50_net_sales: number
@@ -427,10 +454,12 @@ export type Database = {
           p95_high: number
           p95_low: number
           run_id: string
+          visibility?: string
         }
         Update: {
           created_at?: string
           day?: string
+          engine?: string
           id?: number
           org_id?: string
           p50_net_sales?: number
@@ -439,6 +468,7 @@ export type Database = {
           p95_high?: number
           p95_low?: number
           run_id?: string
+          visibility?: string
         }
         Relationships: [
           {
@@ -463,6 +493,7 @@ export type Database = {
           branch_id: string | null
           created_at: string
           created_by: string
+          engine: string
           finished_at: string | null
           history_days: number
           horizon_days: number
@@ -474,12 +505,14 @@ export type Database = {
           params: Json
           started_at: string | null
           status: string
+          visibility: string
         }
         Insert: {
           anchor_date: string
           branch_id?: string | null
           created_at?: string
           created_by: string
+          engine?: string
           finished_at?: string | null
           history_days?: number
           horizon_days?: number
@@ -491,12 +524,14 @@ export type Database = {
           params?: Json
           started_at?: string | null
           status: string
+          visibility?: string
         }
         Update: {
           anchor_date?: string
           branch_id?: string | null
           created_at?: string
           created_by?: string
+          engine?: string
           finished_at?: string | null
           history_days?: number
           horizon_days?: number
@@ -508,6 +543,7 @@ export type Database = {
           params?: Json
           started_at?: string | null
           status?: string
+          visibility?: string
         }
         Relationships: [
           {
@@ -1615,6 +1651,40 @@ export type Database = {
         }
         Returns: Json
       }
+      create_forecast_run: {
+        Args: {
+          p_branch_id?: string
+          p_engine?: string
+          p_history_days?: number
+          p_horizon_days?: number
+          p_org_id: string
+        }
+        Returns: {
+          anchor_date: string
+          branch_id: string | null
+          created_at: string
+          created_by: string
+          engine: string
+          finished_at: string | null
+          history_days: number
+          horizon_days: number
+          id: string
+          message: string | null
+          metrics: Json
+          model: string
+          org_id: string
+          params: Json
+          started_at: string | null
+          status: string
+          visibility: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "forecast_runs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       create_import_job: {
         Args: {
           p_content_type: string
@@ -1846,6 +1916,18 @@ export type Database = {
           }
       get_sales_daily_range: {
         Args: { p_end: string; p_org_id: string; p_start: string }
+        Returns: {
+          day: string
+          net_sales: number
+        }[]
+      }
+      get_sales_daily_range_branch: {
+        Args: {
+          p_branch_id: string
+          p_end: string
+          p_org_id: string
+          p_start: string
+        }
         Returns: {
           day: string
           net_sales: number
