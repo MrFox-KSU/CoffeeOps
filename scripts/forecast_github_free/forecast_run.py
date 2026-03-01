@@ -51,8 +51,12 @@ def main():
     ap.add_argument("--run-id", required=True)
     args = ap.parse_args()
 
-    SUPABASE_URL = os.environ["SUPABASE_URL"].rstrip("/")
-    SRK = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+        SUPABASE_URL = os.environ.get("SUPABASE_URL","").strip().rstrip("/")
+    if not SUPABASE_URL or not SUPABASE_URL.startswith("http"):
+        raise RuntimeError("Missing/invalid SUPABASE_URL. Set GitHub Actions secret SUPABASE_URL to https://<project>.supabase.co")
+    SRK = os.environ.get("SUPABASE_SERVICE_ROLE_KEY","").strip()
+    if not SRK:
+        raise RuntimeError("Missing SUPABASE_SERVICE_ROLE_KEY. Set GitHub Actions secret SUPABASE_SERVICE_ROLE_KEY")
     h = headers(SUPABASE_URL, SRK)
 
     run = rest_get(SUPABASE_URL, h, "/rest/v1/forecast_runs", params={"id": f"eq.{args.run_id}", "select": "id,org_id,horizon_days,history_days,anchor_date,branch_id"})
@@ -128,3 +132,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
