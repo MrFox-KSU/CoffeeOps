@@ -1,0 +1,54 @@
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/supabase/types";
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __supabaseBrowserClient: SupabaseClient | undefined;
+}
+
+function required(name: string): string {
+  const v = process.env[name];
+  if (!v) {
+    throw new Error(
+      `Missing required env var: ${name}. Ensure .env.local exists in repo root and restart the dev server.`
+    );
+  }
+  return v;
+}
+
+/**
+ * Universal-safe Supabase client factory.
+ *
+ * - In the browser: returns a singleton with session persistence.
+ * - On the server/build: returns an ephemeral client with browser-only auth features disabled.
+ *
+ * This prevents Next.js prerender/build crashes while keeping normal browser auth behavior.
+ */
+export function getSupabaseBrowserClient(): SupabaseClient {
+  const url = required("NEXT_PUBLIC_SUPABASE_URL");
+  const anon = required("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  const isBrowser = typeof window !== "undefined";
+
+  if (isBrowser) {
+    if (!globalThis.__supabaseBrowserClient) {
+      globalThis.__supabaseBrowserClient = createClient<Database>(url, anon, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+        },
+      });
+    }
+    return globalThis.__supabaseBrowserClient;
+  }
+
+  // Server/build: do NOT persist sessions or try to read URL storage.
+  // This client is safe for rendering and for server-side RPCs when needed.
+  return createClient<Database>(url, anon, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
+}

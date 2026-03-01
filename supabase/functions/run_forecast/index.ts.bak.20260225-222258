@@ -1,0 +1,281 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { Matrix } from "https://esm.sh/ml-matrix@6.12.0";
+
+function resp(data: unknown, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "authorization, x-user-jwt, x-client-info, apikey, content-type",
+    },
+  });
+}
+
+const dayMs = 24 * 60 * 60 * 1000;
+
+function iso(d: Date) { return d.toISOString().slice(0, 10); }
+function fromISO(s: string) { return new Date(s + "T00:00:00Z"); }
+function addDays(d: Date, n: number) { return new Date(d.getTime() + n * dayMs); }
+function clamp(x: number, lo: number, hi: number) { return Math.max(lo, Math.min(hi, x)); }
+
+function mean(a: number[]) { return a.length ? a.reduce((p,c)=>p+c,0)/a.length : 0; }
+function stdev(a: number[]) {
+  if (a.length < 2) return 0;
+  const m = mean(a);
+  const v = a.reduce((p,c)=>p+(c-m)*(c-m),0)/(a.length-1);
+  return Math.sqrt(v);
+}
+
+function buildFeatures(
+  t: number,
+  y: number[],
+  date: Date
+) {
+  // Feature set:
+  // 1) intercept
+  // 2) trend (scaled)
+  // 3) day-of-week one-hot (6 dummies, drop Sunday)
+  // 4) yearly Fourier (K=3 => 6 features)
+  // 5) lags: 1,7,14,28
+  // 6) rolling means: 7,28
+
+  const x: number[] = [];
+  x.push(1);
+
+  x.push(t / 365.0);
+
+  const dow = date.getUTCDay(); // 0..6
+  for (let k = 1; k <= 6; k++) x.push(dow === k ? 1 : 0); // drop 0
+
+  const twoPi = 2 * Math.PI;
+  for (let k = 1; k <= 3; k++) {
+    const ang = twoPi * k * (t / 365.0);
+    x.push(Math.sin(ang));
+    x.push(Math.cos(ang));
+  }
+
+  const lag = (n: number) => (t - n >= 0 ? y[t - n] : y[0] ?? 0);
+  x.push(lag(1));
+  x.push(lag(7));
+  x.push(lag(14));
+  x.push(lag(28));
+
+  const roll = (n: number) => {
+    const start = Math.max(0, t - n);
+    const arr = y.slice(start, t);
+    return arr.length ? mean(arr) : (y[0] ?? 0);
+  };
+  x.push(roll(7));
+  x.push(roll(28));
+
+  return x;
+}
+
+function standardize(X: number[][]) {
+  const n = X.length;
+  const p = X[0].length;
+  const mu = Array(p).fill(0);
+  const sd = Array(p).fill(0);
+
+  for (let j=0;j<p;j++) {
+    const col = X.map(r => r[j]);
+    mu[j] = mean(col);
+    sd[j] = stdev(col) || 1;
+  }
+  const Z = X.map(r => r.map((v,j)=>(v-mu[j])/sd[j]));
+  return { Z, mu, sd };
+}
+
+function ridgeFit(X: number[][], y: number[], lambda: number) {
+  const n = X.length;
+  const p = X[0].length;
+  const Xmat = new Matrix(X);
+  const ymat = Matrix.columnVector(y);
+
+  const Xt = Xmat.transpose();
+  const XtX = Xt.mmul(Xmat);
+  const I = Matrix.eye(p, p).mul(lambda);
+  const A = XtX.add(I);
+  const XtY = Xt.mmul(ymat);
+
+  const w = A.solve(XtY); // p x 1
+  return w; // Matrix
+}
+
+function predictRow(w: Matrix, x: number[]) {
+  let s = 0;
+  for (let j=0;j<x.length;j++) s += w.get(j,0) * x[j];
+  return s;
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return resp({ ok: true });
+
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceKey) return resp({ error: "Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY" }, 500);
+
+  const userJwt = req.headers.get("x-user-jwt") ?? req.headers.get("X-User-JWT") ?? "";
+  if (!userJwt) return resp({ error: "Missing x-user-jwt header" }, 401);
+
+  const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
+  const { data: userData, error: userErr } = await admin.auth.getUser(userJwt);
+  if (userErr || !userData?.user) return resp({ error: "Invalid user JWT" }, 401);
+
+  const body = await req.json().catch(() => ({}));
+  const org_id = body?.org_id as string | undefined;
+  const horizon_days = Number(body?.horizon_days ?? 30);
+  const history_days = Number(body?.history_days ?? 365);
+
+  if (!org_id) return resp({ error: "Missing org_id" }, 400);
+  const horizon = clamp(horizon_days || 30, 7, 90);
+  const history = clamp(history_days || 365, 90, 730);
+
+  // membership
+  const { data: member } = await admin.from("org_members")
+    .select("org_id")
+    .eq("org_id", org_id)
+    .eq("user_id", userData.user.id)
+    .maybeSingle();
+  if (!member) return resp({ error: "Forbidden" }, 403);
+
+  // anchor date
+  const { data: anchorData, error: anchorErr } = await admin.rpc("org_anchor_date", { p_org_id: org_id });
+  if (anchorErr) return resp({ error: "Failed anchor date", details: anchorErr.message }, 400);
+
+  const anchor = fromISO(String(anchorData));
+  const start = addDays(anchor, -history);
+
+  // create run row
+  const { data: runRow, error: runErr } = await admin
+    .from("forecast_runs")
+    .insert({
+      org_id,
+      created_by: userData.user.id,
+      model: "hsar_ridge_v1",
+      horizon_days: horizon,
+      history_days: history,
+      anchor_date: iso(anchor),
+      status: "running",
+      params: { lambda_candidates: [0.1, 1, 10, 100], validation_days: 28 },
+      started_at: new Date().toISOString(),
+    })
+    .select("*")
+    .single();
+
+  if (runErr || !runRow) return resp({ error: "Failed to create run", details: runErr?.message }, 400);
+
+  const run_id = runRow.id as string;
+
+  // load history daily net sales
+  const { data: hist, error: histErr } = await admin.rpc("get_sales_daily_range", {
+    p_org_id: org_id,
+    p_start: iso(start),
+    p_end: iso(anchor),
+  });
+
+  if (histErr) {
+    await admin.from("forecast_runs").update({ status: "failed", message: histErr.message, finished_at: new Date().toISOString() }).eq("id", run_id);
+    return resp({ error: "Failed history", details: histErr.message }, 400);
+  }
+
+  // build continuous daily series (fill missing with 0)
+  const map = new Map<string, number>();
+  for (const r of (hist as any[] ?? [])) map.set(String(r.day), Number(r.net_sales ?? 0));
+
+  const dates: Date[] = [];
+  const y: number[] = [];
+  for (let d = new Date(start); d <= anchor; d = addDays(d, 1)) {
+    const key = iso(d);
+    dates.push(new Date(d));
+    y.push(map.get(key) ?? 0);
+  }
+
+  const n = y.length;
+  const valDays = 28;
+  const trainEnd = Math.max(60, n - valDays); // ensure enough training
+  const lambdas = [0.1, 1, 10, 100];
+
+  function fitAndScore(lambda: number) {
+    const Xtrain: number[][] = [];
+    const ytrain: number[] = [];
+
+    for (let t=0; t<trainEnd; t++) {
+      Xtrain.push(buildFeatures(t, y, dates[t]));
+      ytrain.push(y[t]);
+    }
+
+    const { Z: Ztrain, mu, sd } = standardize(Xtrain);
+    const w = ridgeFit(Ztrain, ytrain, lambda);
+
+    // validate with teacher forcing (use actual y for lags)
+    const errs: number[] = [];
+    for (let t=trainEnd; t<n; t++) {
+      const x = buildFeatures(t, y, dates[t]).map((v,j)=>(v-mu[j])/sd[j]);
+      const yhat = Math.max(0, predictRow(w, x));
+      errs.push(y[t] - yhat);
+    }
+
+    const mae = mean(errs.map(e=>Math.abs(e)));
+    const mape = mean(errs.map((e,i)=> {
+      const actual = y[trainEnd + i];
+      return actual > 1e-6 ? Math.abs(e)/actual : 0;
+    })) * 100;
+
+    const sigma = stdev(errs);
+    return { lambda, w, mu, sd, mae, mape, sigma };
+  }
+
+  const scored = lambdas.map(fitAndScore).sort((a,b)=>a.mae-b.mae);
+  const best = scored[0];
+
+  // forecast recursively (use predicted values for future lags)
+  const yExt = y.slice(); // will append predictions
+  const dateExt = dates.slice();
+
+  const outputs = [];
+  for (let i=1; i<=horizon; i++) {
+    const d = addDays(anchor, i);
+    dateExt.push(d);
+    const t = yExt.length;
+    const xRaw = buildFeatures(t, yExt, d);
+    const x = xRaw.map((v,j)=>(v-best.mu[j])/best.sd[j]);
+    const p50 = Math.max(0, predictRow(best.w, x));
+    yExt.push(p50);
+
+    const z80 = 1.281551565545;
+    const z95 = 1.95996398454;
+    const p80_low = Math.max(0, p50 - z80 * best.sigma);
+    const p80_high = Math.max(0, p50 + z80 * best.sigma);
+    const p95_low = Math.max(0, p50 - z95 * best.sigma);
+    const p95_high = Math.max(0, p50 + z95 * best.sigma);
+
+    outputs.push({
+      run_id,
+      org_id,
+      day: iso(d),
+      p50_net_sales: Number(p50.toFixed(2)),
+      p80_low: Number(p80_low.toFixed(2)),
+      p80_high: Number(p80_high.toFixed(2)),
+      p95_low: Number(p95_low.toFixed(2)),
+      p95_high: Number(p95_high.toFixed(2)),
+    });
+  }
+
+  const { error: outErr } = await admin.from("forecast_outputs").insert(outputs);
+  if (outErr) {
+    await admin.from("forecast_runs").update({ status: "failed", message: outErr.message, finished_at: new Date().toISOString() }).eq("id", run_id);
+    return resp({ error: "Failed outputs", details: outErr.message }, 400);
+  }
+
+  await admin.from("forecast_runs").update({
+    status: "succeeded",
+    model: "hsar_ridge_v1",
+    metrics: { lambda: best.lambda, mae: best.mae, mape: best.mape, sigma: best.sigma },
+    message: `OK • λ=${best.lambda} • MAE=${best.mae.toFixed(2)} • MAPE=${best.mape.toFixed(2)}%`,
+    finished_at: new Date().toISOString(),
+  }).eq("id", run_id);
+
+  return resp({ ok: true, run_id, horizon_days: horizon, anchor_date: iso(anchor), metrics: { lambda: best.lambda, mae: best.mae, mape: best.mape, sigma: best.sigma } });
+});

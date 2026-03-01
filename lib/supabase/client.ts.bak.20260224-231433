@@ -1,0 +1,41 @@
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __supabaseBrowserClient: SupabaseClient | undefined;
+}
+
+function required(name: string): string {
+  const v = process.env[name];
+  if (!v) {
+    throw new Error(
+      `Missing required env var: ${name}. Ensure .env.local exists in repo root and restart the dev server.`
+    );
+  }
+  return v;
+}
+
+/**
+ * Browser-only singleton Supabase client.
+ * NEVER returns null. Throws if called server-side or if env is missing.
+ */
+export function getSupabaseBrowserClient(): SupabaseClient {
+  if (typeof window === "undefined") {
+    throw new Error("getSupabaseBrowserClient() must be called in the browser.");
+  }
+
+  if (!globalThis.__supabaseBrowserClient) {
+    const url = required("NEXT_PUBLIC_SUPABASE_URL");
+    const anon = required("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+
+    globalThis.__supabaseBrowserClient = createClient(url, anon, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    });
+  }
+
+  return globalThis.__supabaseBrowserClient;
+}

@@ -1,0 +1,5 @@
+[functions.parse_csv_to_staging]
+verify_jwt = false
+
+[functions.run_forecast]
+verify_jwt = false

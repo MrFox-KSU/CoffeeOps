@@ -1,0 +1,5 @@
+sku,product_name,category,default_price,unit_cost,currency,active
+ESP-SGL,Single Espresso,Espresso,21.67,5.2,SAR,TRUE
+LAT-LRG,Latte (Large),Espresso,26.5,7.1,SAR,TRUE
+CLD-BRW,Cold Brew,Brewed,24.0,5.5,SAR,TRUE
+PST-CRS,Butter Croissant,Pastries,12.0,4.0,SAR,TRUE

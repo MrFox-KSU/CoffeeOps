@@ -1,0 +1,296 @@
+# Import Contract Report
+Generated (UTC): 2026-02-24T10:45:39Z
+Repo root: /Users/macintosh/Downloads/coffeeops-exec-bi
+
+## App roots
+- src/app: EXISTS
+- app: EXISTS
+
+## Templates (public/templates) header rows
+### public/templates/expenses_template.csv
+expense_date,reference_number,vendor,branch_code,cost_center_code,category,amount,vat_rate,tax_amount,total_amount,payment_method,notes,currency
+### public/templates/labor_template.csv
+work_date,employee_id,employee_name,role,branch_code,hours,hourly_rate,cost,currency
+### public/templates/products_template.csv
+sku,product_name,category,default_price,unit_cost,currency,active
+### public/templates/sales_lines_template.csv
+invoice_date,external_invoice_number,branch_code,invoice_type,channel,payment_method,line_number,sku,product_name,category,quantity,unit_price,discount_rate,net_sales,vat_rate,tax_amount,total_amount,currency
+
+## Frontend contract signals (required fields + canonical keys)
+lib/import/detect.ts:58:    'expense_date',
+lib/import/detect.ts:79:    'product_name',
+lib/import/detect.ts:119:    countAny(h, ['sku', 'product', 'product_name', 'barcode']) * 3 +
+lib/import/detect.ts:129:    { entity: 'sales', score: scoreSales, signals: salesSignals },
+lib/import/detect.ts:130:    { entity: 'expenses', score: scoreExpenses, signals: expenseSignals },
+lib/import/detect.ts:131:    { entity: 'products', score: scoreProducts, signals: productSignals },
+lib/import/detect.ts:132:    { entity: 'labor', score: scoreLabor, signals: laborSignals }
+lib/import/requirements.ts:16:      key: 'invoice_date',
+lib/import/requirements.ts:30:      key: 'product_name',
+lib/import/requirements.ts:70:      key: 'expense_date',
+lib/import/requirements.ts:108:    { key: 'product_name', label: 'Product name', type: 'string', required: true },
+lib/supabase/types.ts:129:          entity_type: 'sales' | 'expenses' | 'products' | 'labor' | 'unknown';
+lib/supabase/types.ts:145:          entity_type: 'sales' | 'expenses' | 'products' | 'labor' | 'unknown';
+lib/supabase/types.ts:158:          entity_type?: 'sales' | 'expenses' | 'products' | 'labor' | 'unknown';
+lib/supabase/types.ts:209:          p_entity_type: 'sales' | 'expenses' | 'products' | 'labor' | 'unknown';
+lib/supabase/types.ts:242:      import_entity: 'sales' | 'expenses' | 'products' | 'labor' | 'unknown';
+lib/supabase/types.ts:254:          net_sales: number;
+lib/import/mapping.ts:1:import type { FieldRequirement } from '@/lib/import/requirements';
+lib/import/mapping.ts:16:  invoice_date: ['date', 'invoice date', 'sale date', 'transaction date', 'timestamp', 'time'],
+lib/import/mapping.ts:18:  product_name: ['product', 'product name', 'item', 'item name', 'menu item', 'description'],
+lib/import/mapping.ts:25:  expense_date: ['date', 'expense date', 'transaction date', 'posted date'],
+lib/import/mapping.ts:41:  // Exact compact match (invoice_date vs invoice date)
+lib/import/mapping.ts:60:export function suggestMapping(requirements: FieldRequirement[], headers: string[]): Record<string, string> {
+lib/import/mapping.ts:63:  for (const req of requirements) {
+app/dashboard/import/[jobId]/page.tsx.bak_xuserjwt.20260224-052308:8:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak_xuserjwt.20260224-052308:371:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-034806:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-034806:358:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak_xuserjwt.20260224-052308:8:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak_xuserjwt.20260224-052308:371:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-035657:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-035657:358:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-030031:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-030031:358:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-032659:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-032659:358:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak_envfix.20260224-042534:10:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak_envfix.20260224-042534:368:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-034821:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-034821:358:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-035657:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-035657:358:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-030031:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-030031:358:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-034853:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-034853:358:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx:8:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx:371:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx:8:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx:371:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-034853:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-034853:358:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-032205:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak.20260224-032205:362:              <div className="text-muted">No requirements for this entity yet.</div>
+app/dashboard/import/[jobId]/page.tsx.bak2.20260224-040217:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+app/dashboard/import/[jobId]/page.tsx.bak2.20260224-040217:379:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-034821:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-034821:358:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak_envfix.20260224-042534:10:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak_envfix.20260224-042534:368:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak2.20260224-040217:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak2.20260224-040217:379:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-034806:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-034806:358:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-032659:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-032659:358:              <div className="text-muted">No requirements for this entity yet.</div>
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-032205:9:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+src/app/dashboard/import/[jobId]/page.tsx.bak.20260224-032205:362:              <div className="text-muted">No requirements for this entity yet.</div>
+
+## Import Center pages (paths + key snippets)
+### app/dashboard/import/page.tsx
+52:  const [entitySelect, setEntitySelect] = useState<EntitySelect>('auto');
+166:      const detected = detection?.entity ?? 'unknown';
+167:      const finalEntity: ImportEntityType = entitySelect === 'auto' ? detected : entitySelect;
+185:        entity_selection: {
+186:          mode: entitySelect,
+194:        p_entity_type: finalEntity,
+230:              <div className="h6 mb-1">Download CSV templates</div>
+232:                Canonical headers (zero mapping). Fill rows then upload.
+236:              <a className="btn btn-outline-light btn-sm" href="/templates/products_template.csv" download>
+239:              <a className="btn btn-outline-light btn-sm" href="/templates/sales_lines_template.csv" download>
+242:              <a className="btn btn-outline-light btn-sm" href="/templates/expenses_template.csv" download>
+245:              <a className="btn btn-outline-light btn-sm" href="/templates/labor_template.csv" download>
+248:              <a className="btn btn-outline-info btn-sm" href="/templates/README_IMPORT_TEMPLATES.md" target="_blank" rel="noreferrer">
+276:              <div className="h6 mb-1">Download CSV templates</div>
+278:                Canonical headers (zero mapping). Fill rows then upload.
+282:              <a className="btn btn-outline-light btn-sm" href="/templates/products_template.csv" download>Products</a>
+283:              <a className="btn btn-outline-light btn-sm" href="/templates/sales_lines_template.csv" download>Sales</a>
+284:              <a className="btn btn-outline-light btn-sm" href="/templates/expenses_template.csv" download>Expenses</a>
+285:              <a className="btn btn-outline-light btn-sm" href="/templates/labor_template.csv" download>Labor</a>
+286:              <a className="btn btn-outline-info btn-sm" href="/templates/README_IMPORT_TEMPLATES.md" target="_blank" rel="noreferrer">Template guide</a>
+373:                        value={entitySelect}
+396:                        <span className="badge text-bg-secondary">{detection.entity}</span>
+429:                  Parsing + mapping arrives in Iteration 3. This iteration focuses on the file/job shell with auditability.
+461:                  <td className="fw-semibold">{j.entity_type}</td>
+
+### app/dashboard/import/[jobId]/page.tsx
+8:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+9:import { suggestMapping } from '@/lib/import/mapping';
+61:  const [mapping, setMapping] = useState<Mapping>({});
+62:  const [mappingDirty, setMappingDirty] = useState(false);
+119:  // Initialize mapping once we have job + parsed columns
+122:    if (mappingDirty) return;
+125:    const reqs = ENTITY_REQUIREMENTS[job.entity_type] ?? [];
+132:    const saved = meta?.mapping && typeof meta.mapping === 'object' ? (meta.mapping as Mapping) : null;
+133:    const suggested = meta?.suggested_mapping && typeof meta.suggested_mapping === 'object' ? (meta.suggested_mapping as Mapping) : null;
+138:  }, [job, mappingDirty]);
+153:  async function parseCsv() {
+200:  async function saveMappingAndValidate() {
+207:      const { error: saveErr } = await supabase.rpc('save_import_job_mapping', {
+209:        p_mapping: mapping
+216:      // Re-run parse so validations apply against the explicit mapping.
+217:      await parseCsv();
+219:      setError(e?.message ?? 'Failed to save mapping');
+256:  const reqs = ENTITY_REQUIREMENTS[job.entity_type] ?? [];
+267:  const missingRequiredMappings = reqs.filter((r) => r.required && !mapping[r.key]);
+283:          <button className="btn btn-primary" onClick={parseCsv} disabled={busyParse}>
+309:                <div className="fw-semibold">{job.entity_type}</div>
+366:            <div className="small-muted">Column mapping</div>
+371:              <div className="text-muted">No requirements for this entity yet.</div>
+380:                    Missing mappings for: <span className="code-inline">{missingRequiredMappings.map((r) => r.key).join(', ')}</span>
+411:                              value={mapping[r.key] ?? ''}
+437:                    Re-suggest mapping
+443:                    onClick={saveMappingAndValidate}
+445:                    {busySave || busyParse ? 'Saving & validating…' : 'Save mapping + Validate'}
+450:                  Saving writes to <span className="code-inline">import_jobs.metadata.mapping</span>.
+
+### src/app/dashboard/import/page.tsx
+52:  const [entitySelect, setEntitySelect] = useState<EntitySelect>('auto');
+166:      const detected = detection?.entity ?? 'unknown';
+167:      const finalEntity: ImportEntityType = entitySelect === 'auto' ? detected : entitySelect;
+185:        entity_selection: {
+186:          mode: entitySelect,
+194:        p_entity_type: finalEntity,
+230:              <div className="h6 mb-1">Download CSV templates</div>
+232:                Canonical headers (zero mapping). Fill rows then upload.
+236:              <a className="btn btn-outline-light btn-sm" href="/templates/products_template.csv" download>
+239:              <a className="btn btn-outline-light btn-sm" href="/templates/sales_lines_template.csv" download>
+242:              <a className="btn btn-outline-light btn-sm" href="/templates/expenses_template.csv" download>
+245:              <a className="btn btn-outline-light btn-sm" href="/templates/labor_template.csv" download>
+248:              <a className="btn btn-outline-info btn-sm" href="/templates/README_IMPORT_TEMPLATES.md" target="_blank" rel="noreferrer">
+276:              <div className="h6 mb-1">Download CSV templates</div>
+278:                Canonical headers (zero mapping). Fill rows then upload.
+282:              <a className="btn btn-outline-light btn-sm" href="/templates/products_template.csv" download>Products</a>
+283:              <a className="btn btn-outline-light btn-sm" href="/templates/sales_lines_template.csv" download>Sales</a>
+284:              <a className="btn btn-outline-light btn-sm" href="/templates/expenses_template.csv" download>Expenses</a>
+285:              <a className="btn btn-outline-light btn-sm" href="/templates/labor_template.csv" download>Labor</a>
+286:              <a className="btn btn-outline-info btn-sm" href="/templates/README_IMPORT_TEMPLATES.md" target="_blank" rel="noreferrer">Template guide</a>
+373:                        value={entitySelect}
+396:                        <span className="badge text-bg-secondary">{detection.entity}</span>
+429:                  Parsing + mapping arrives in Iteration 3. This iteration focuses on the file/job shell with auditability.
+461:                  <td className="fw-semibold">{j.entity_type}</td>
+
+### src/app/dashboard/import/[jobId]/page.tsx
+8:import { ENTITY_REQUIREMENTS } from '@/lib/import/requirements';
+9:import { suggestMapping } from '@/lib/import/mapping';
+61:  const [mapping, setMapping] = useState<Mapping>({});
+62:  const [mappingDirty, setMappingDirty] = useState(false);
+119:  // Initialize mapping once we have job + parsed columns
+122:    if (mappingDirty) return;
+125:    const reqs = ENTITY_REQUIREMENTS[job.entity_type] ?? [];
+132:    const saved = meta?.mapping && typeof meta.mapping === 'object' ? (meta.mapping as Mapping) : null;
+133:    const suggested = meta?.suggested_mapping && typeof meta.suggested_mapping === 'object' ? (meta.suggested_mapping as Mapping) : null;
+138:  }, [job, mappingDirty]);
+153:  async function parseCsv() {
+200:  async function saveMappingAndValidate() {
+207:      const { error: saveErr } = await supabase.rpc('save_import_job_mapping', {
+209:        p_mapping: mapping
+216:      // Re-run parse so validations apply against the explicit mapping.
+217:      await parseCsv();
+219:      setError(e?.message ?? 'Failed to save mapping');
+256:  const reqs = ENTITY_REQUIREMENTS[job.entity_type] ?? [];
+267:  const missingRequiredMappings = reqs.filter((r) => r.required && !mapping[r.key]);
+283:          <button className="btn btn-primary" onClick={parseCsv} disabled={busyParse}>
+309:                <div className="fw-semibold">{job.entity_type}</div>
+366:            <div className="small-muted">Column mapping</div>
+371:              <div className="text-muted">No requirements for this entity yet.</div>
+380:                    Missing mappings for: <span className="code-inline">{missingRequiredMappings.map((r) => r.key).join(', ')}</span>
+411:                              value={mapping[r.key] ?? ''}
+437:                    Re-suggest mapping
+443:                    onClick={saveMappingAndValidate}
+445:                    {busySave || busyParse ? 'Saving & validating…' : 'Save mapping + Validate'}
+450:                  Saving writes to <span className="code-inline">import_jobs.metadata.mapping</span>.
+
+## Edge Function contract signals
+### supabase/functions/parse_csv_to_staging/index.ts
+194:        errors.push(`Missing required field: ${k}`);
+
+## Migrations affecting import tables
+supabase/migrations/0006_fix_import_job_rows_row_index.sql:4:alter table public.import_job_rows
+supabase/migrations/0006_fix_import_job_rows_row_index.sql:12:  from public.import_job_rows
+supabase/migrations/0006_fix_import_job_rows_row_index.sql:15:update public.import_job_rows r
+supabase/migrations/0006_fix_import_job_rows_row_index.sql:21:alter table public.import_job_rows
+supabase/migrations/0006_fix_import_job_rows_row_index.sql:29:    where conname = 'import_job_rows_row_index_positive'
+supabase/migrations/0006_fix_import_job_rows_row_index.sql:31:    execute 'alter table public.import_job_rows add constraint import_job_rows_row_index_positive check (row_index > 0)';
+supabase/migrations/0002_iteration2_import_center.sql:7:-- - Creates Import Center tables: import_jobs + import_job_rows (staging)
+supabase/migrations/0002_iteration2_import_center.sql:10:-- - Adds RPC helpers for the UI shell: create_import_job, list_import_jobs, get_import_job
+supabase/migrations/0002_iteration2_import_center.sql:49:create table if not exists public.import_jobs (
+supabase/migrations/0002_iteration2_import_center.sql:67:create index if not exists import_jobs_org_id_created_at_idx on public.import_jobs(org_id, created_at desc);
+supabase/migrations/0002_iteration2_import_center.sql:68:create index if not exists import_jobs_org_id_status_idx on public.import_jobs(org_id, status);
+supabase/migrations/0002_iteration2_import_center.sql:70:comment on table public.import_jobs is 'One row per uploaded file. Drives the Import Center workflow.';
+supabase/migrations/0002_iteration2_import_center.sql:73:create table if not exists public.import_job_rows (
+supabase/migrations/0002_iteration2_import_center.sql:75:  job_id uuid not null references public.import_jobs(id) on delete cascade,
+supabase/migrations/0002_iteration2_import_center.sql:84:create index if not exists import_job_rows_job_id_idx on public.import_job_rows(job_id);
+supabase/migrations/0002_iteration2_import_center.sql:86:comment on table public.import_job_rows is 'Staged rows + row-level validation results for a specific import job.';
+supabase/migrations/0002_iteration2_import_center.sql:92:drop trigger if exists trg_import_jobs_set_updated_at on public.import_jobs;
+supabase/migrations/0002_iteration2_import_center.sql:93:create trigger trg_import_jobs_set_updated_at
+supabase/migrations/0002_iteration2_import_center.sql:94:before update on public.import_jobs
+supabase/migrations/0002_iteration2_import_center.sql:189:alter table public.import_jobs enable row level security;
+supabase/migrations/0002_iteration2_import_center.sql:190:alter table public.import_job_rows enable row level security;
+supabase/migrations/0002_iteration2_import_center.sql:192:-- import_jobs: org members can read
+supabase/migrations/0002_iteration2_import_center.sql:193:drop policy if exists import_jobs_select_member on public.import_jobs;
+supabase/migrations/0002_iteration2_import_center.sql:194:create policy import_jobs_select_member
+supabase/migrations/0002_iteration2_import_center.sql:195:on public.import_jobs
+supabase/migrations/0002_iteration2_import_center.sql:200:-- import_jobs: org members can insert their own jobs
+supabase/migrations/0002_iteration2_import_center.sql:201:drop policy if exists import_jobs_insert_member on public.import_jobs;
+supabase/migrations/0002_iteration2_import_center.sql:202:create policy import_jobs_insert_member
+supabase/migrations/0002_iteration2_import_center.sql:203:on public.import_jobs
+supabase/migrations/0002_iteration2_import_center.sql:211:-- import_jobs: org members can update jobs (status changes, metadata) within their org
+supabase/migrations/0002_iteration2_import_center.sql:212:drop policy if exists import_jobs_update_member on public.import_jobs;
+supabase/migrations/0002_iteration2_import_center.sql:213:create policy import_jobs_update_member
+supabase/migrations/0002_iteration2_import_center.sql:214:on public.import_jobs
+supabase/migrations/0002_iteration2_import_center.sql:220:-- import_job_rows: org members can read staged rows for jobs in their org
+supabase/migrations/0002_iteration2_import_center.sql:221:drop policy if exists import_job_rows_select_member on public.import_job_rows;
+supabase/migrations/0002_iteration2_import_center.sql:222:create policy import_job_rows_select_member
+supabase/migrations/0002_iteration2_import_center.sql:223:on public.import_job_rows
+supabase/migrations/0002_iteration2_import_center.sql:229:    from public.import_jobs j
+supabase/migrations/0002_iteration2_import_center.sql:230:    where j.id = import_job_rows.job_id
+supabase/migrations/0002_iteration2_import_center.sql:250:returns public.import_jobs
+supabase/migrations/0002_iteration2_import_center.sql:255:  v_row public.import_jobs;
+supabase/migrations/0002_iteration2_import_center.sql:267:  insert into public.import_jobs(
+supabase/migrations/0002_iteration2_import_center.sql:301:create or replace function public.list_import_jobs(
+supabase/migrations/0002_iteration2_import_center.sql:305:returns setof public.import_jobs
+supabase/migrations/0002_iteration2_import_center.sql:311:  from public.import_jobs
+supabase/migrations/0002_iteration2_import_center.sql:317:grant execute on function public.list_import_jobs(uuid, int) to authenticated;
+supabase/migrations/0002_iteration2_import_center.sql:322:returns public.import_jobs
+supabase/migrations/0002_iteration2_import_center.sql:328:  from public.import_jobs
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:9:    where table_schema='public' and table_name='import_job_rows' and column_name='row_number'
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:14:      where table_schema='public' and table_name='import_job_rows' and column_name='row_index'
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:16:      execute 'alter table public.import_job_rows rename column row_index to row_number';
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:18:      execute 'alter table public.import_job_rows add column row_number integer';
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:28:  from public.import_job_rows
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:30:update public.import_job_rows r
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:36:alter table public.import_job_rows
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:43:    where conname = 'import_job_rows_row_number_check'
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:45:    execute 'alter table public.import_job_rows add constraint import_job_rows_row_number_check check (row_number >= 1)';
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:56:      and tablename='import_job_rows'
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:57:      and indexname='import_job_rows_job_id_row_number_uidx'
+supabase/migrations/0007_fix_import_job_rows_row_number.sql:59:    execute 'create unique index import_job_rows_job_id_row_number_uidx on public.import_job_rows(job_id, row_number)';
+supabase/migrations/0004_fix_import_job_rows_columns.sql:10:      and table_name = 'import_job_rows'
+supabase/migrations/0004_fix_import_job_rows_columns.sql:16:      and table_name = 'import_job_rows'
+supabase/migrations/0004_fix_import_job_rows_columns.sql:19:    execute 'alter table public.import_job_rows rename column parsed_row to parsed';
+supabase/migrations/0004_fix_import_job_rows_columns.sql:24:alter table public.import_job_rows
+supabase/migrations/0003_iteration3_parsing_mapping.sql:8:-- - Adding missing RLS policies for staging inserts/deletes (import_job_rows)
+supabase/migrations/0003_iteration3_parsing_mapping.sql:31:  public.import_jobs,
+supabase/migrations/0003_iteration3_parsing_mapping.sql:32:  public.import_job_rows
+supabase/migrations/0003_iteration3_parsing_mapping.sql:35:-- Sequence privileges (bigserial on import_job_rows)
+supabase/migrations/0003_iteration3_parsing_mapping.sql:46:-- RLS: import_job_rows write policies (required for Edge Function parsing)
+supabase/migrations/0003_iteration3_parsing_mapping.sql:50:drop policy if exists import_job_rows_insert_member on public.import_job_rows;
+supabase/migrations/0003_iteration3_parsing_mapping.sql:51:create policy import_job_rows_insert_member
+supabase/migrations/0003_iteration3_parsing_mapping.sql:52:on public.import_job_rows
+supabase/migrations/0003_iteration3_parsing_mapping.sql:58:    from public.import_jobs j
+supabase/migrations/0003_iteration3_parsing_mapping.sql:59:    where j.id = import_job_rows.job_id
+supabase/migrations/0003_iteration3_parsing_mapping.sql:65:drop policy if exists import_job_rows_delete_member on public.import_job_rows;
+supabase/migrations/0003_iteration3_parsing_mapping.sql:66:create policy import_job_rows_delete_member
+supabase/migrations/0003_iteration3_parsing_mapping.sql:67:on public.import_job_rows
+supabase/migrations/0003_iteration3_parsing_mapping.sql:73:    from public.import_jobs j
+supabase/migrations/0003_iteration3_parsing_mapping.sql:74:    where j.id = import_job_rows.job_id
+supabase/migrations/0003_iteration3_parsing_mapping.sql:104:-- RPC: list_import_job_rows (preview)
+supabase/migrations/0003_iteration3_parsing_mapping.sql:107:create or replace function public.list_import_job_rows(
+supabase/migrations/0003_iteration3_parsing_mapping.sql:111:returns setof public.import_job_rows
+supabase/migrations/0003_iteration3_parsing_mapping.sql:117:  from public.import_job_rows
+supabase/migrations/0003_iteration3_parsing_mapping.sql:123:grant execute on function public.list_import_job_rows(uuid, int) to authenticated;
+supabase/migrations/0003_iteration3_parsing_mapping.sql:133:returns public.import_jobs
+supabase/migrations/0003_iteration3_parsing_mapping.sql:139:  v_job public.import_jobs;
+supabase/migrations/0003_iteration3_parsing_mapping.sql:147:  from public.import_jobs
+supabase/migrations/0003_iteration3_parsing_mapping.sql:158:  update public.import_jobs

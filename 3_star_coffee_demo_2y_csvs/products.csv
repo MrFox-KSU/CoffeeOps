@@ -1,0 +1,26 @@
+sku,name,category,default_price,unit_cost,currency,active
+ESP-SGL,Single Espresso,Espresso,21.67,5.2,SAR,True
+ESP-DBL,Double Espresso,Espresso,17.3,4.44,SAR,True
+AME-LRG,Americano (Large),Espresso,22.84,6.73,SAR,True
+LAT-LRG,Latte (Large),Espresso,24.71,6.06,SAR,True
+CAP-LRG,Cappuccino (Large),Espresso,19.06,4.58,SAR,True
+MOC-LRG,Mocha (Large),Espresso,16.62,4.66,SAR,True
+DRP-REG,Drip Coffee,Brewed,12.32,2.47,SAR,True
+V60-REG,V60 Pour Over,Brewed,19.8,4.41,SAR,True
+CLD-BRW,Cold Brew,Brewed,14.65,3.31,SAR,True
+ICE-LAT,Iced Latte,Cold Drinks,28.95,7.4,SAR,True
+ICE-AME,Iced Americano,Cold Drinks,28.89,9.18,SAR,True
+FRP-CRM,Caramel Frappe,Cold Drinks,21.44,5.77,SAR,True
+FRP-MOC,Mocha Frappe,Cold Drinks,31.32,8.94,SAR,True
+LEM-ICD,Iced Lemonade,Cold Drinks,17.48,4.61,SAR,True
+TEA-BLK,Black Tea,Tea,22.17,4.57,SAR,True
+TEA-GRN,Green Tea,Tea,21.69,4.64,SAR,True
+TEA-CHAI,Chai Latte,Tea,18.43,4.21,SAR,True
+PST-CRS,Butter Croissant,Pastries,13.03,4.63,SAR,True
+PST-ALM,Almond Croissant,Pastries,16.64,6.03,SAR,True
+PST-MFN,Blueberry Muffin,Pastries,16.89,6.05,SAR,True
+PST-BRN,Cinnamon Bun,Pastries,15.64,4.73,SAR,True
+PST-CKE,Chocolate Cookie,Pastries,11.82,3.88,SAR,True
+SND-TRK,Turkey Sandwich,Sandwiches,19.28,7.09,SAR,True
+SND-CHKN,Chicken Sandwich,Sandwiches,19.62,7.33,SAR,True
+SND-VGN,Veggie Wrap,Sandwiches,28.17,10.81,SAR,True

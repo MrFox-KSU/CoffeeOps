@@ -1,0 +1,34 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+/**
+ * Iteration 1 requirement:
+ * If env vars are missing, the app should show a clear setup page and NEVER crash.
+ */
+export function middleware(req: NextRequest) {
+  const hasSupabaseEnv =
+    !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!hasSupabaseEnv) {
+    const { pathname } = req.nextUrl;
+
+    // Allow the setup page + next internals.
+    if (
+      pathname.startsWith('/setup') ||
+      pathname.startsWith('/_next') ||
+      pathname === '/favicon.ico'
+    ) {
+      return NextResponse.next();
+    }
+
+    const url = req.nextUrl.clone();
+    url.pathname = '/setup';
+    return NextResponse.rewrite(url);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)']
+};

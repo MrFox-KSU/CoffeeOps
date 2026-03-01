@@ -1,0 +1,146 @@
+/* =========================================================
+   CoffeeOps BI — Single Source of Truth CSS
+   Load order: bootstrap first, then THIS file.
+   Do not add other custom CSS files.
+   ========================================================= */
+
+/* ---------- Theme tokens ---------- */
+:root{
+  --bg:#f6f7fb;
+  --panel:#ffffff;
+  --panel-2:#fbfcff;
+  --border:#e5e7eb;
+
+  --text:#111827;
+  --muted:#6b7280;
+
+  --brand-1:#4361ee; /* indigo */
+  --brand-2:#4cc9f0; /* cyan */
+
+  --shadow: 0 10px 30px rgba(17,24,39,0.06);
+  --radius: 18px;
+}
+
+/* ---------- Base ---------- */
+html, body { height: 100%; }
+body{
+  background: var(--bg);
+  color: var(--text);
+}
+a{ color: var(--brand-1); }
+.text-secondary, .small-muted{ color: var(--muted) !important; }
+
+/* ---------- Layout ---------- */
+.app-shell{ min-height: 100vh; }
+.sidebar{
+  width: 280px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+}
+.topbar{
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Sidebar brand badge (replaces inline styles) */
+.brand-badge{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
+}
+
+/* ---------- Bootstrap overrides (central) ---------- */
+.card{
+  background: var(--panel) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.no-shadow{ box-shadow: none !important; }
+
+.nav-link{
+  color: var(--text) !important;
+  border-radius: 12px;
+}
+.nav-link:hover{ background: rgba(67,97,238,0.08); }
+.nav-link.active{
+  background: rgba(67,97,238,0.12) !important;
+  border: 1px solid rgba(67,97,238,0.20);
+}
+
+.btn-primary{
+  border: 0;
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+}
+.btn-outline-secondary{
+  border-color: var(--border);
+}
+
+.table{
+  --bs-table-bg: transparent;
+  color: var(--text);
+}
+.table thead th{
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom-color: var(--border) !important;
+}
+.table td, .table th{
+  border-top-color: var(--border) !important;
+}
+
+.form-control, .form-select{
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 12px;
+}
+.form-control:focus, .form-select:focus{
+  border-color: rgba(67,97,238,0.45);
+  box-shadow: 0 0 0 .2rem rgba(67,97,238,0.15);
+}
+
+/* Code inline */
+.code-inline{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  font-size: .92em;
+  padding: .15rem .35rem;
+  border-radius: .35rem;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+
+/* ---------- Tone utilities (for your rule: dark panel => light text; light panel => dark text) ---------- */
+.panel-light{
+  background: var(--panel) !important;
+  color: var(--text) !important;
+}
+.panel-light *{ color: inherit; }
+
+.panel-dark{
+  background:#0f1115 !important;
+  color:#f3f4f6 !important;
+  border: 1px solid #2a2f38 !important;
+}
+.panel-dark *{ color: inherit; }
+.panel-dark .text-secondary, .panel-dark .small-muted{ color: rgba(243,244,246,0.70) !important; }
+.panel-dark a{ color:#8ab4ff !important; }
+
+/* ---------- Utility classes (replaces inline styles) ---------- */
+.ws-prewrap{ white-space: pre-wrap; }
+.maxw-360{ max-width: 360px; }
+.border-subtle{ border-color: var(--border) !important; }
+.chart-320{ width: 100%; height: 320px; }
+.minw-220{ min-width: 220px; }
+.minw-240{ min-width: 240px; }
+.w-160{ width: 160px; }
+.w-90{ width: 90px; }
+
+.hero-box{
+  height: 220px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: var(--panel-2);
+}

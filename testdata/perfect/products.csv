@@ -1,0 +1,9 @@
+sku,product_name,category,default_price,unit_cost,currency,active
+ESP-SGL,Single Espresso,Espresso,21.67,5.2,SAR,TRUE
+ESP-DBL,Double Espresso,Espresso,24.5,6.1,SAR,TRUE
+LAT-LRG,Latte (Large),Espresso,26.5,7.1,SAR,TRUE
+CAP-LRG,Cappuccino (Large),Espresso,25.0,6.8,SAR,TRUE
+CLD-BRW,Cold Brew,Brewed,24.0,5.5,SAR,TRUE
+DRP-REG,Drip Coffee,Brewed,18.0,4.0,SAR,TRUE
+PST-CRS,Butter Croissant,Pastries,12.0,4.0,SAR,TRUE
+PST-MFN,Blueberry Muffin,Pastries,13.0,4.5,SAR,TRUE

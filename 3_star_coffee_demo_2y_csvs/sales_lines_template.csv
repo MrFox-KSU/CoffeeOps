@@ -1,0 +1,2 @@
+invoice_date,external_invoice_number,branch_code,invoice_type,channel,payment_method,line_number,sku,product_name,category,quantity,unit_price,discount_rate,net_sales,vat_rate,tax_amount,total_amount,currency
+2025-01-15,3SC-DTN-20250115-0001,3SC-DTN,sale,in_store,card,1,ESP-SGL,Single Espresso,Espresso,1,21.67,0.00,21.67,0.15,3.25,24.92,SAR
