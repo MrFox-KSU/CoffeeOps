@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -1484,7 +1484,11 @@ export type Database = {
           global_benchmark_enabled: boolean
           max_benchmark_plots: number
           max_branches: number
+          max_forecast_history_days: number
+          max_forecast_horizon_days: number
+          max_forecast_runs_per_day: number
           name: string
+          paid_forecast_enabled: boolean
           tier_code: string
           updated_at: string
         }
@@ -1494,7 +1498,11 @@ export type Database = {
           global_benchmark_enabled?: boolean
           max_benchmark_plots: number
           max_branches: number
+          max_forecast_history_days?: number
+          max_forecast_horizon_days?: number
+          max_forecast_runs_per_day?: number
           name: string
+          paid_forecast_enabled?: boolean
           tier_code: string
           updated_at?: string
         }
@@ -1504,7 +1512,11 @@ export type Database = {
           global_benchmark_enabled?: boolean
           max_benchmark_plots?: number
           max_branches?: number
+          max_forecast_history_days?: number
+          max_forecast_horizon_days?: number
+          max_forecast_runs_per_day?: number
           name?: string
+          paid_forecast_enabled?: boolean
           tier_code?: string
           updated_at?: string
         }
@@ -1827,6 +1839,29 @@ export type Database = {
               total_amount: number
             }[]
           }
+      get_forecast_entitlements: {
+        Args: { p_org_id: string }
+        Returns: {
+          can_use_paid: boolean
+          forecast_enabled: boolean
+          max_forecast_history_days: number
+          max_forecast_horizon_days: number
+          max_forecast_runs_per_day: number
+          tier_code: string
+        }[]
+      }
+      get_forecast_entitlements_v2: {
+        Args: { p_org_id: string }
+        Returns: {
+          can_use_paid: boolean
+          forecast_enabled: boolean
+          max_forecast_history_days: number
+          max_forecast_horizon_days: number
+          max_forecast_runs_per_day: number
+          paid_forecast_enabled: boolean
+          tier_code: string
+        }[]
+      }
       get_forecast_outputs: {
         Args: { p_run_id: string }
         Returns: {

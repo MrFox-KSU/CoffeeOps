@@ -1,4 +1,4 @@
-﻿name: forecast-free
+name: forecast-free
 
 on:
   workflow_dispatch:
