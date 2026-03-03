@@ -1840,6 +1840,20 @@ export type Database = {
           y_label: string
         }[]
       }
+      get_exec_daily: {
+        Args: { p_branch_id?: string; p_days?: number; p_org_id: string }
+        Returns: {
+          cogs_total: number
+          day: string
+          expenses_total: number
+          gross_margin: number
+          gross_profit: number
+          invoices: number
+          labor_total: number
+          net_profit: number
+          net_sales: number
+        }[]
+      }
       get_exec_kpis:
         | {
             Args: {
@@ -1881,6 +1895,18 @@ export type Database = {
         Returns: {
           amount: number
           cost_center_code: string
+        }[]
+      }
+      get_expense_category_mix: {
+        Args: {
+          p_branch_id?: string
+          p_days?: number
+          p_limit?: number
+          p_org_id: string
+        }
+        Returns: {
+          amount: number
+          category: string
         }[]
       }
       get_expenses_cost_center_daily: {
@@ -2094,6 +2120,24 @@ export type Database = {
               units_sold: number
             }[]
           }
+      get_unit_economics_by_sku_branch: {
+        Args: { p_branch_id?: string; p_days?: number; p_org_id: string }
+        Returns: {
+          avg_price: number
+          cogs_labor: number
+          cogs_material: number
+          cogs_overhead: number
+          cogs_packaging: number
+          cogs_per_unit: number
+          cogs_total: number
+          gross_margin: number
+          gross_profit: number
+          net_sales: number
+          product_name: string
+          sku: string
+          units_sold: number
+        }[]
+      }
       import_expenses_from_staging: {
         Args: { p_job_id: string }
         Returns: Json
