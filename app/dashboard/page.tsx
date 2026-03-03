@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -59,11 +59,11 @@ export default function DashboardPage() {
     if (!orgId) return;
 
     const [d30, d365, d90, ex, ue] = await Promise.all([
-      supabase.rpc("get_exec_daily", { p_org_id: orgId, p_branch_id: branchId, p_days: 30 }),
-      supabase.rpc("get_exec_daily", { p_org_id: orgId, p_branch_id: branchId, p_days: 365 }),
-      supabase.rpc("get_exec_daily", { p_org_id: orgId, p_branch_id: branchId, p_days: 90 }),
-      supabase.rpc("get_expense_category_mix", { p_org_id: orgId, p_branch_id: branchId, p_days: 30, p_limit: 10 }),
-      supabase.rpc("get_unit_economics_by_sku_branch", { p_org_id: orgId, p_branch_id: branchId, p_days: 30 }),
+      supabase.rpc("get_exec_daily", { p_org_id: orgId, p_branch_id: (branchId || undefined), p_days: 30 }),
+      supabase.rpc("get_exec_daily", { p_org_id: orgId, p_branch_id: (branchId || undefined), p_days: 365 }),
+      supabase.rpc("get_exec_daily", { p_org_id: orgId, p_branch_id: (branchId || undefined), p_days: 90 }),
+      supabase.rpc("get_expense_category_mix", { p_org_id: orgId, p_branch_id: (branchId || undefined), p_days: 30, p_limit: 10 }),
+      supabase.rpc("get_unit_economics_by_sku_branch", { p_org_id: orgId, p_branch_id: (branchId || undefined), p_days: 30 }),
     ]);
 
     if (d30.error) return setErr(d30.error.message);
@@ -150,7 +150,7 @@ export default function DashboardPage() {
           <h1 className="h3 m-0">Executive Overview</h1>
           <div className="small text-secondary">
             Scoped by Org + Branch switcher. Org: <span className="code-inline">{orgId || "(none)"}</span>
-            {branchId ? <> • Branch: <span className="code-inline">{branchId}</span></> : <> • Branch: <span className="code-inline">ALL</span></>}
+            {branchId ? <> â€¢ Branch: <span className="code-inline">{branchId}</span></> : <> â€¢ Branch: <span className="code-inline">ALL</span></>}
           </div>
         </div>
 
