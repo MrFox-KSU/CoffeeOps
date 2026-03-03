@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import { detectImportEntity } from "@/lib/import/detect";
+import { detectEntity } from "@/lib/import/detect";
 
 type ImportEntityType = "sales" | "expenses" | "products" | "labor" | "unknown";
 
@@ -63,7 +63,7 @@ export default function ImportCenterPage() {
     setHeaders(h);
 
     try {
-      const d = detectImportEntity(h);
+      const d = detectEntity(h);
       setDetected((d?.entity ?? "unknown") as ImportEntityType);
     } catch {
       setDetected("unknown");
