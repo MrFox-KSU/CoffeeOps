@@ -45,6 +45,17 @@ export default function ImportCenterPage() {
 
   const [orgs, setOrgs] = useState<Org[]>([]);
   const [currentOrgId, setCurrentOrgId] = useState<string>('');
+  // Keep Import Center synced with the global org switcher (DashboardShell)
+  useEffect(() => {
+    const sync = () => {
+      const next = localStorage.getItem("coffeeops.active_org_id") ?? "";
+      if (!next) return;
+      setCurrentOrgId((prev: string) => (prev === next ? prev : next));
+    };
+    sync();
+    window.addEventListener("coffeeops:scope", sync);
+    return () => window.removeEventListener("coffeeops:scope", sync);
+  }, []);
   const [jobs, setJobs] = useState<ImportJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -77,7 +88,7 @@ export default function ImportCenterPage() {
       }
 
       const { data: orgRows, error: orgErr } = await supabase
-        .rpc('list_my_orgs');
+        .rpc('list_orgs_for_dropdown');
 
       if (orgErr) {
         setError(orgErr.message);
@@ -85,10 +96,22 @@ export default function ImportCenterPage() {
         return;
       }
 
-      const o = (orgRows ?? []) as Org[];
+      const o = ((orgRows ?? []) as any[]).map((r: any) => ({ id: (r.org_id ?? r.id) as string, name: r.name as string }));
       setOrgs(o);
+      const savedOrg = localStorage.getItem("coffeeops.active_org_id");
+      const nextOrg = (savedOrg && o.some((x: any) => x.id === savedOrg))
+        ? savedOrg
+        : (o[0]?.id ?? "");
 
-      const saved = typeof window !== 'undefined' ? window.localStorage.getItem('coffeeops.currentOrgId') : null;
+      if (nextOrg) {
+        // only set if empty; don't fight the global switcher
+        setCurrentOrgId((prev: string) => (prev ? prev : nextOrg));
+        if (!savedOrg) {
+          localStorage.setItem("coffeeops.active_org_id", nextOrg);
+          window.dispatchEvent(new Event("coffeeops:scope"));
+        }
+      }
+const saved = typeof window !== 'undefined' ? window.localStorage.getItem('coffeeops.currentOrgId') : null;
       const defaultOrgId = saved && o.some((x) => x.id === saved) ? saved : o[0]?.id ?? '';
       setCurrentOrgId(defaultOrgId);
 
@@ -256,7 +279,7 @@ export default function ImportCenterPage() {
         <div className="d-flex justify-content-between align-items-center">
           <div>
             <div className="small-muted">Loading</div>
-            <div className="h5 mb-0">Import Center…</div>
+            <div className="h5 mb-0">Import Centerâ€¦</div>
           </div>
           <div className="spinner-border" role="status" aria-label="loading" />
         </div>
@@ -292,7 +315,7 @@ export default function ImportCenterPage() {
       <div className="d-flex flex-wrap justify-content-between align-items-end gap-2">
         <div>
           <div className="small-muted">Import Center</div>
-          <h1 className="h3 mb-0">CSV uploads → Import Jobs</h1>
+          <h1 className="h3 mb-0">CSV uploads â†’ Import Jobs</h1>
         </div>
         <div className="d-flex gap-2">
           <Link href="/onboarding/org" className="btn btn-outline-light">
@@ -305,7 +328,7 @@ export default function ImportCenterPage() {
         <div className="card panel-light p-4">
           <div className="h5 mb-2">Backend not ready</div>
           <p className="text-muted mb-2">
-            This page relies on the Iteration 2 migration. If you haven’t run it yet, do this in Supabase SQL Editor:
+            This page relies on the Iteration 2 migration. If you havenâ€™t run it yet, do this in Supabase SQL Editor:
           </p>
           <div className="text-muted">
             <span className="code-inline">supabase/migrations/0002_iteration2_import_center.sql</span>
@@ -383,7 +406,7 @@ export default function ImportCenterPage() {
                     </div>
                     <div className="d-flex align-items-end">
                       <button className="btn btn-primary" onClick={upload} disabled={!file || uploading || !currentOrgId}>
-                        {uploading ? 'Uploading…' : 'Upload & Create Job'}
+                        {uploading ? 'Uploadingâ€¦' : 'Upload & Create Job'}
                       </button>
                     </div>
                   </div>
@@ -400,7 +423,7 @@ export default function ImportCenterPage() {
                         <div className="small-muted mt-2">
                           Headers ({headers.length}):{' '}
                           <span className="code-inline">{headers.slice(0, 8).join(', ')}</span>
-                          {headers.length > 8 ? <span className="small-muted"> …</span> : null}
+                          {headers.length > 8 ? <span className="small-muted"> â€¦</span> : null}
                         </div>
                       ) : null}
                     </div>
@@ -419,8 +442,8 @@ export default function ImportCenterPage() {
                 <div className="small-muted">Pipeline</div>
                 <div className="fw-semibold">Job status lifecycle</div>
                 <div className="text-muted mt-2">
-                  <span className="code-inline">uploaded</span> → <span className="code-inline">parsed</span> →{' '}
-                  <span className="code-inline">validated</span> → <span className="code-inline">imported</span>
+                  <span className="code-inline">uploaded</span> â†’ <span className="code-inline">parsed</span> â†’{' '}
+                  <span className="code-inline">validated</span> â†’ <span className="code-inline">imported</span>
                   <br />
                   Or: <span className="code-inline">failed</span>
                 </div>

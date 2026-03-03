@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -773,6 +773,79 @@ export type Database = {
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      labor_entries: {
+        Row: {
+          branch_id: string
+          cost: number
+          created_at: string
+          currency: string | null
+          employee_id: string
+          employee_name: string | null
+          hourly_rate: number
+          hours: number
+          id: string
+          org_id: string
+          role: string
+          source_import_job_id: string | null
+          updated_at: string
+          work_date: string
+        }
+        Insert: {
+          branch_id: string
+          cost: number
+          created_at?: string
+          currency?: string | null
+          employee_id: string
+          employee_name?: string | null
+          hourly_rate: number
+          hours: number
+          id?: string
+          org_id: string
+          role: string
+          source_import_job_id?: string | null
+          updated_at?: string
+          work_date: string
+        }
+        Update: {
+          branch_id?: string
+          cost?: number
+          created_at?: string
+          currency?: string | null
+          employee_id?: string
+          employee_name?: string | null
+          hourly_rate?: number
+          hours?: number
+          id?: string
+          org_id?: string
+          role?: string
+          source_import_job_id?: string | null
+          updated_at?: string
+          work_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "labor_entries_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "labor_entries_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "orgs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "labor_entries_source_import_job_id_fkey"
+            columns: ["source_import_job_id"]
+            isOneToOne: false
+            referencedRelation: "import_jobs"
             referencedColumns: ["id"]
           },
         ]
@@ -2025,6 +2098,7 @@ export type Database = {
         Args: { p_job_id: string }
         Returns: Json
       }
+      import_labor_from_staging: { Args: { p_job_id: string }; Returns: Json }
       import_products_from_staging: {
         Args: { p_job_id: string }
         Returns: Json
